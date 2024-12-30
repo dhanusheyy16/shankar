@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Panel - Saree Elegance</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+
+        header {
+            background-color: #005f73;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .container {
+            width: 90%;
+            margin: 20px auto;
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-container input {
+            display: block;
+            width: 100%;
+            max-width: 500px;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form-container button {
+            background-color: #008cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #006f8e;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .product {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .product img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .product h3 {
+            font-size: 22px;
+            margin: 15px 0;
+            color: #005f73;
+        }
+
+        .product p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .product button {
+            background-color: #008cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .product button:hover {
+            background-color: #006f8e;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Saree Elegance</h1>
+    </header>
+
+    <div class="container">
+        <!-- Customer Details Form -->
+        <div class="form-container" id="customer-form-container">
+            <h2>Enter Your Details</h2>
+            <input type="text" id="customer-name" placeholder="Your Name" required>
+            <input type="text" id="customer-location" placeholder="Your Location" required>
+            <button onclick="submitCustomerDetails()">Submit</button>
+        </div>
+
+        <!-- Product List -->
+        <div class="product-grid" id="product-list" style="display: none;">
+            <!-- Dynamically generated products will be inserted here -->
+        </div>
+    </div>
+
+    <script>
+        let customerDetails = {};
+
+        // Save customer details and display product list
+        function submitCustomerDetails() {
+            const name = document.getElementById("customer-name").value;
+            const location = document.getElementById("customer-location").value;
+
+            if (name && location) {
+                customerDetails = { name, location };
+                document.getElementById("customer-form-container").style.display = "none";
+                loadProducts();
+                document.getElementById("product-list").style.display = "grid";
+            } else {
+                alert("Please fill in both fields.");
+            }
+        }
+
+        // Load products from localStorage
+        function loadProducts() {
+            const products = JSON.parse(localStorage.getItem("products")) || [];
+            const productList = document.getElementById("product-list");
+
+            productList.innerHTML = ""; // Clear existing content
+
+            if (products.length > 0) {
+                products.forEach(product => {
+                    const productDiv = document.createElement("div");
+                    productDiv.classList.add("product");
+                    productDiv.innerHTML = `
+                        <img src="${product.image}" alt="${product.name}">
+                        <h3>${product.name}</h3>
+                        <p>Price: ₹${product.price}</p>
+                        <p>${product.description}</p>
+                        <button onclick="placeOrder('${product.name}', '${product.image}', ${product.price})">Order Now</button>
+                    `;
+                    productList.appendChild(productDiv);
+                });
+            } else {
+                productList.innerHTML = `<p>No products available. Please check back later.</p>`;
+            }
+        }
+
+        // Place order via WhatsApp
+        function placeOrder(productName, price) {
+            if (!customerDetails.name || !customerDetails.location) {
+                alert("Please enter your details first.");
+                return;
+            }
+
+            const { name, location } = customerDetails;
+            const message = `
+                *Customer Order Details*:
+                -------------------------
+                *Name*: ${name}
+                *Location*: ${location}
+
+                -------------------------
+                *Ordered Product*:
+                *Name*: ${productName}
+                *Price*: ₹${price}
+
+                
+            `;
+            
+            const whatsappUrl = `https://wa.me/919361550283?text=${encodeURIComponent(message)}`;
+
+            // Open WhatsApp URL
+            window.open(whatsappUrl, "_blank");
+        }
+    </script>
+</body>
+</html>

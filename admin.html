@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Upload Products</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+
+        header {
+            background-color: #005f73;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .container {
+            width: 90%;
+            margin: 20px auto;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        form input, form textarea, form button {
+            display: block;
+            width: 100%;
+            max-width: 500px;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        form button {
+            background-color: #008cba;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #006f8e;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #005f73;
+            color: white;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Admin Panel</h1>
+    </header>
+
+    <div class="container">
+        <form id="product-form">
+            <h2>Upload a Product</h2>
+            <input type="text" id="product-name" placeholder="Product Name" required>
+            <input type="number" id="product-price" placeholder="Price (₹)" required>
+            <textarea id="product-description" placeholder="Description" required></textarea>
+            <input type="file" id="product-image" accept="image/*" required>
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Saree Elegance. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById("product-form").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const productName = document.getElementById("product-name").value;
+            const productPrice = document.getElementById("product-price").value;
+            const productDescription = document.getElementById("product-description").value;
+            const productImageFile = document.getElementById("product-image").files[0];
+
+            if (productImageFile) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const product = {
+                        name: productName,
+                        price: productPrice,
+                        description: productDescription,
+                        image: event.target.result
+                    };
+
+                    // Save product to localStorage
+                    let products = JSON.parse(localStorage.getItem("products")) || [];
+                    products.push(product);
+                    localStorage.setItem("products", JSON.stringify(products));
+
+                    alert("Product uploaded successfully!");
+                    document.getElementById("product-form").reset();
+                };
+
+                reader.readAsDataURL(productImageFile);
+            } else {
+                alert("Please upload a valid image.");
+            }
+        });
+    </script>
+</body>
+</html>
